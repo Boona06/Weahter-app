@@ -8,7 +8,7 @@ export default function Card(props){
 
     return(
     <>
-         <div className={`h-[800px] w-2/6 ${props.color} rounded-[48px] ${props.style} border-solid border-8 `}>
+         <div className={`h-[800px] w-2/6 ${props.color} rounded-[48px] ${props.style}  `}>
             <div>
                <div className="flex justify-around pt-10 ">
                   <div >
