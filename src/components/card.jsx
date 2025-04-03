@@ -1,39 +1,34 @@
-"use client"
-import { CiHome } from "react-icons/ci";
-import { CiLocationOn } from "react-icons/ci";
-import { FaRegHeart } from "react-icons/fa";
-import { FaRegUser } from "react-icons/fa";
-import { useState ,useEffect } from "react";
-export default function Card(props){
+"use client";
+import { CiHome, CiLocationOn } from "react-icons/ci";
+import { FaRegHeart, FaRegUser } from "react-icons/fa";
 
-    return(
-    <>
-         <div className={`h-[800px] w-2/6 ${props.color} rounded-[48px] ${props.style}  `}>
-            <div>
-               <div className="flex justify-around pt-10 ">
-                  <div >
-                     <h3 className="text-gray-950">{props.date}</h3>
-                     <h1 className={`font-bold text-[48px] `}>{props.city}</h1>
-                  </div>
-                   <span><CiLocationOn  className="size-7 mt-4" /></span>
-               </div>
-               <div className="h-[277px] w-[277px] mr-auto ml-auto mt-6 relative">
-               <img src={props.image} className="h-[277px] w-[277px] mr-auto ml-auto mt-6 blur-md " />
-               <img src={props.image} className="h-[277px] w-[277px] mr-auto ml-auto -mt-72 absolute z-10 " />
-               </div>
-                    <div className="flex gap-6">
-                    <span className="font-bold text-[120px] ml-10 ">{props.temperature}</span>
-                    <div className="w-8 h-8 bg-[#f3f4f6] rounded-full border-[10px] border-[#111827] mt-[40px] "></div>
-                    </div>
-                   <h1 className={`font-bold text-[24px] ml-10 text-[#ff8e27] `} >{props.condition}</h1>
-            </div>
-            <div className="flex justify-around mt-8">
-               <a><CiHome className="size-7 hover:text-zinc-950" /></a>
-               <a><CiLocationOn  className="size-7  hover:text-zinc-950 " /></a>
-               <a><FaRegHeart className="size-7  hover:text-zinc-950" /></a>
-               <a><FaRegUser className="size-7  hover:text-zinc-950" /></a>
-            </div>
-          </div>
-    </>
-    );
+export default function Card(props) {
+  return (
+    <div className={`max-h-[760px] max-w-sm ${props?.color} rounded-[48px] ${props?.style}`}>
+      <div className="flex justify-around pt-10">
+        <div>
+          <h3 className="text-gray-950">{props?.date}</h3>
+          <h1 className="font-bold text-[48px]">{props?.city}</h1>
+        </div>
+        <CiLocationOn className="size-7 mt-4" />
+      </div>
+      <div className="h-[277px] w-[277px] mx-auto mt-6 relative">
+        <img src={props?.image} alt="weather condition" className="h-[277px] w-[277px] blur-md" />
+        <img src={props?.image} alt="weather condition" className="h-[277px] w-[277px] absolute top-0 z-10" />
+      </div>
+      <div className="flex  gap-6">
+        <p className={`font-bold text-[120px] bg-clip-text text-transparent ml-10 ${props.temperatureColor
+        }`}> { Math.floor(props?.temperature) }</p>
+        <div className={`w-8 h-8 rounded-full border-[10px] ${props.circle
+        } mt-[40px] p-2 `} ></div>
+    </div>
+      <h1 className={`font-bold text-[24px] ml-10 ${props?.conditionColor}`}>{props?.condition}</h1>
+      <div className="flex justify-around mt-8">
+        <button><CiHome className="size-7 hover:text-zinc-950" /></button>
+        <button><CiLocationOn className="size-7 hover:text-zinc-950" /></button>
+        <button><FaRegHeart className="size-7 hover:text-zinc-950" /></button>
+        <button><FaRegUser className="size-7 hover:text-zinc-950" /></button>
+      </div>
+    </div>
+  );
 }

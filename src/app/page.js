@@ -1,73 +1,91 @@
-"use client"
+  "use client";
+  import { useState, useEffect } from "react";
+  import Search from "@/components/search";
+  import Card from "@/components/card";
 
+  export default function Home() {
+    const API_KEY = "09d66b5e838b40e19ff72738241312";
+    const [search, setSearch] = useState("");
+    const [city, setCity] = useState("Ulaanbaatar");
+    const [dayWeather, setDayWeather] = useState({});
+    const [suggest, setSuggest] = useState([]);
+    const [errorMessage, setErrorMessage] = useState(""); 
 
-import Image from "next/image";
-import Search from "@/components/search";
-import Card from "@/components/card";
-import { useState ,useEffect } from "react";
-export default function Home() {
+    const fetchWeather = async (cityName) => {
+      try {
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=1&aqi=no&alerts=no`
+        );
 
+        if (!response.ok) {
+          throw new Error("Цаг агаарын мэдээлэл авахад алдаа гарлаа! Та хотын нэрээ шалгана уу? ");
+        }
 
-const API_KEY="09d66b5e838b40e19ff72738241312"
-  const [search,setSearch]=useState('')
-  const [city,setcity]=useState("Ulaanbaatar")
-  const [dayWeather,setDayWeather]=useState({})
-  let onchange=(event)=>{
-   const value=event.target.value
-   setSearch(value)
-  }
-  const onPressEnter=(e)=>{
-    if(e.code==="Enter"){
-      setcity(search)
-    }
-  }
-  useEffect(()=>{
-    fetch(`http://api.weatherapi.com/v1/forecast.json?key=09d66b5e838b40e19ff72738241312&q=${city}&days=1&aqi=no&alerts=no`)
-    .then( (response)=>response.json())
-    .then ((data)=>{
-     console.log(data)
-      setDayWeather({
-        temperature: data.forecast.forecastday[0].day.maxtemp_c,
-        nightTemp: data.forecast.forecastday[0].day.mintemp_c,
-        condition: data.forecast.forecastday[0].day.condition.text,
-        nightCondition: data.forecast.forecastday[0].hour[22].condition.text,
-        date:data.forecast.forecastday[0].date 
-      })
-    })
-    },[city])
-  return (
-    <div className="flex h-screen  ">
-      <div className="bg-[#f3f4f6] w-full ">
-        <Search onchange={onchange} onKeyDown={onPressEnter}/>
-        <Card
-          style={"ml-auto mr-auto pd-5 mt-28 border-solid border-8 ease-in duration-300 hover:border-amber-300"}
-          color={"bg-white"}
-          image={"/sun.png"}
-          city={city}
-          temperature={dayWeather.temperature}
-          condition={dayWeather.condition}
-          date={dayWeather.date}
-        />
+        const data = await response.json();
+        setDayWeather({
+          temperature: data.forecast.forecastday[0].day.maxtemp_c,
+          nightTemp: data.forecast.forecastday[0].day.mintemp_c,
+          condition: data.forecast.forecastday[0].day.condition.text,
+          nightCondition: data.forecast.forecastday[0].hour[22].condition.text,
+          date: data.forecast.forecastday[0].date,
+        });
+
+        setErrorMessage(""); 
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+    };
+
+    useEffect(() => {
+      fetchWeather(city);
+    }, [city]);
+
+    return (
+      <div className="flex ">
+        <div className="bg-gray-100 w-full">
+          <Search
+            onchange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.code === "Enter" && setCity(search)}
+            suggestions={suggest}
+            onSelect={(suggestion) => {
+              setSearch(suggestion.name);
+              setCity(suggestion.name);
+              setSuggest([]);
+            }}
+          />
+          {errorMessage && (
+            <div className="text-red-600 font-bold text-center mt-4">
+              {errorMessage}
+            </div>
+          )}
+
+          <Card
+            style="mx-auto mt-28 p-5  border-8 border-transparent hover:border-amber-300 transition"
+            color="bg-white"
+            image="/Sun.png"
+            city={city}
+            temperature={dayWeather.temperature}
+            temperatureColor={" bg-gradient-to-b from-[#111827] to-[#6B7280] from-75% "}
+            circle={"bg-white "}
+            condition={dayWeather.condition}
+            conditionColor={" text-[#FF8E27] "}
+            date={dayWeather.date}
+          />
+        </div>
+        <div className="bg-[#0F141E] w-full relative">
+          <Card
+            style="mx-auto mt-48 p-5 border-8  border-gray-900 hover:border-black transition"
+            color=" bg-gradient-to-b from-[#1F2937] to-[#11182700] "
+            image="/Rain.png"
+            city={city}
+            temperature={dayWeather.nightTemp}
+            temperatureColor={" bg-gradient-to-b form-[#F9FAFB] to-[#F9FAFB] from-30% "}
+            circle={"bg-[#0F141E] "}
+            condition={dayWeather.nightCondition}
+            conditionColor={" text-[#777CCE] "}
+            date={dayWeather.date}
+          />
+        </div>
       </div>
-      <div className="bg-[#0f141e] w-full relative">
-        <Card
-          style={"ml-auto mr-auto pd-5 mt-[190px] border-solid border-[#0f141e] border-8 ease-in duration-300 hover:border-black"}
-          color={"bg-[#111827] "}
-          image={"/Moon.png"}
-          city={city}
-          temperature={dayWeather.nightTemp}
-          condition={dayWeather.nightCondition}
-          date={dayWeather.date}
-        />
-
-          <div className="w-6 h-[140px] bg-[#0f141e] z-10  absolute -mt-[672px] rounded-bl-3xl "></div> 
-            <div className="w-28 h-28 bg-[#f3f4f6] absolute rounded-full -left-16 bottom-[500px] flex gap-2 border-solid border-2 ">
-              <img className="w-6 h-12 mt-7 ml-8 z-30 " src="/vector6.png"></img>
-                <div className="w-6 h-[140px] bg-[#f3f4f6] absolute ml-12 -mt-5 z-0 "></div>
-              <img className="w-6 h-12 mt-7 z-30  " src="/vector5.png"></img>
-             </div>
-          <div className="w-6 h-[140px] bg-[#0f141e]  absolute -mt-[435px] rounded-tl-3xl "></div>
-      </div>
-    </div>
-  );
-}
+    );
+  }
